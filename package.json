@@ -1,0 +1,24 @@
+{
+  "name": "twitch-ps-demo",
+  "version": "1.0.0",
+  "description": "Twitch API demo to get streams based on a query entered by a user",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xabadu/twitch-ps-demo.git"
+  },
+  "keywords": [
+    "twitch",
+    "api",
+    "javascript"
+  ],
+  "author": "Fernando Larrañaga <xabadu@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Xabadu/twitch-ps-demo/issues"
+  },
+  "homepage": "https://github.com/Xabadu/twitch-ps-demo#readme"
+}
