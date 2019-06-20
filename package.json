@@ -4,6 +4,8 @@
   "description": "Twitch API demo to get streams based on a query entered by a user",
   "main": "index.js",
   "scripts": {
+    "build": "parcel build index.html --experimental-scope-hoisting",
+    "start": "parcel index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,5 +22,27 @@
   "bugs": {
     "url": "https://github.com/Xabadu/twitch-ps-demo/issues"
   },
-  "homepage": "https://github.com/Xabadu/twitch-ps-demo#readme"
+  "homepage": "https://github.com/Xabadu/twitch-ps-demo#readme",
+  "devDependencies": {
+    "eslint": "^5.3.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-prettier": "^3.1.0",
+    "husky": "^2.4.1",
+    "lint-staged": "^8.2.1",
+    "parcel": "^1.12.3",
+    "prettier": "1.18.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write",
+      "eslint --fix",
+      "git add"
+    ]
+  }
 }
