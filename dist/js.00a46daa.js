@@ -883,6 +883,8 @@ parcelRequire = (function(modules, cache, entry, globalName) {
           return Constructor;
         }
 
+        var STREAM_BASE_URL = "https://www.twitch.tv/";
+
         var Grid =
           /*#__PURE__*/
           (function() {
@@ -922,11 +924,19 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                 value: function createGridElement(row) {
                   var mainContainer = document.createElement("div");
                   var imageContainer = document.createElement("div");
+                  var imageLink = document.createElement("a");
                   var image = document.createElement("img");
                   var dataContainer = document.createElement("div");
+                  var dataTitleLink = document.createElement("a");
                   var dataTitle = document.createElement("h2");
                   var dataMetadata = document.createElement("p");
                   var dataDescription = document.createElement("p");
+                  dataTitleLink.href = ""
+                    .concat(STREAM_BASE_URL)
+                    .concat(row.user_name);
+                  imageLink.href = ""
+                    .concat(STREAM_BASE_URL)
+                    .concat(row.user_name);
                   var thumbnailURL = row.thumbnail_url.split(
                     "{width}x{height}",
                   );
@@ -940,8 +950,10 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                     .concat(localStorage.getItem("gameName"), " - ")
                     .concat(row.viewer_count, " viewers");
                   dataDescription.innerText = "Description!";
-                  imageContainer.append(image);
-                  dataContainer.append(dataTitle);
+                  imageLink.append(image);
+                  imageContainer.append(imageLink);
+                  dataTitleLink.append(dataTitle);
+                  dataContainer.append(dataTitleLink);
                   dataContainer.append(dataMetadata);
                   dataContainer.append(dataDescription);
                   mainContainer.append(imageContainer);
@@ -1031,6 +1043,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
 
                   this.data = response.data;
                   this.pagination = response.pagination;
+                  console.log(this.data);
                   this.cleanUp();
                   this.createPagination();
                   var cardsContainer = document.querySelector(
@@ -1251,7 +1264,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
           var hostname = "" || location.hostname;
           var protocol = location.protocol === "https:" ? "wss" : "ws";
           var ws = new WebSocket(
-            protocol + "://" + hostname + ":" + "57507" + "/",
+            protocol + "://" + hostname + ":" + "63478" + "/",
           );
 
           ws.onmessage = function(event) {
