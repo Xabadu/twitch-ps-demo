@@ -11,6 +11,8 @@ export default class TwitchAPI {
 
   getStreams(game) {
     if (game.data.length > 0) {
+      localStorage.setItem("gameId", game.data[0].id);
+      localStorage.setItem("gameName", game.data[0].name);
       return this.getRequest(`streams?game_id=${game.data[0].id}`);
     }
     throw new Error(
@@ -27,6 +29,24 @@ export default class TwitchAPI {
       },
     })
       .then(res => res.json())
-      .catch(err => console.log(err));
+      .catch(err => {
+        throw new Error(err);
+      });
+  }
+
+  prefetchPreviousPage(cursor) {
+    const gameId = localStorage.getItem("gameId");
+    if (!gameId || !cursor) {
+      return false;
+    }
+    return this.getRequest(`streams?game_id=${gameId}&before=${cursor}`);
+  }
+
+  prefetchNextPage(cursor) {
+    const gameId = localStorage.getItem("gameId");
+    if (!gameId || !cursor) {
+      return false;
+    }
+    return this.getRequest(`streams?game_id=${gameId}&after=${cursor}`);
   }
 }

@@ -10,7 +10,7 @@ const initListeners = twitchClient => {
   const closeAlert = document.querySelector("#close-alert");
   const searchButton = document.querySelector("#search-button");
   const searchInput = document.querySelector("#search-input");
-  const grid = new Grid();
+  const grid = new Grid(twitchClient);
 
   closeAlert.addEventListener("click", () => {
     hideError();

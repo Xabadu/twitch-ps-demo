@@ -1,14 +1,13 @@
 export default class Grid {
-  constructor() {
+  constructor(twitchClient) {
     this.data = [];
     this.imageSizes = {
       width: 300,
       height: 167,
     };
     this.pagination = "";
-    this.page = {
-      offset: 0,
-    };
+    this.offset = 0;
+    this.twitchClient = twitchClient;
   }
 
   cleanUp() {
@@ -36,7 +35,9 @@ export default class Grid {
       this.imageSizes.height
     }${thumbnailURL[1]}`;
     dataTitle.innerText = row.title;
-    dataMetadata.innerText = `SUPER GAME - ${row.viewer_count} viewers`;
+    dataMetadata.innerText = `${localStorage.getItem("gameName")} - ${
+      row.viewer_count
+    } viewers`;
     dataDescription.innerText = "Description!";
 
     imageContainer.append(image);
@@ -60,12 +61,12 @@ export default class Grid {
     const statsPagination = document.createElement("div");
     const statsCountText = document.createElement("p");
 
-    const total = this.page.offset + this.data.length;
+    const total = this.offset + this.data.length;
 
-    statsCountText.innerText = `Showing results from ${this.page.offset} to ${total}`;
+    statsCountText.innerText = `Showing results from ${this.offset} to ${total}`;
     statsCount.append(statsCountText);
 
-    if (this.page.offset > 0) {
+    if (this.offset > 0) {
       const previousResultsLink = document.createElement("a");
       const previousResultsIcon = document.createElement("i");
       const previousResultsText = document.createElement("p");
@@ -76,6 +77,13 @@ export default class Grid {
 
       previousResultsLink.append(previousResultsIcon);
       previousResultsLink.append(previousResultsText);
+      previousResultsLink.href = "#";
+
+      previousResultsLink.addEventListener("click", () => {
+        this.offset = this.offset - this.data.length;
+        const prevPage = JSON.parse(localStorage.getItem("prevPage"));
+        this.fill(prevPage);
+      });
 
       statsPagination.append(previousResultsLink);
     }
@@ -91,6 +99,18 @@ export default class Grid {
 
       nextResultsLink.append(nextResultsText);
       nextResultsLink.append(nextResultsIcon);
+      nextResultsLink.href = "#";
+
+      nextResultsLink.addEventListener("click", () => {
+        this.offset = this.offset + this.data.length;
+        const prevPageData = JSON.stringify({
+          data: this.data,
+          pagination: this.pagination,
+        });
+        localStorage.setItem("prevPage", prevPageData);
+        const nextPage = JSON.parse(localStorage.getItem("nextPage"));
+        this.fill(nextPage);
+      });
 
       statsPagination.append(nextResultsLink);
     }
@@ -115,5 +135,25 @@ export default class Grid {
       const card = this.createGridElement(row);
       cardsContainer.append(card);
     });
+    this.prefetchPreviousPage();
+    this.prefetchNextPage();
+  }
+
+  prefetchNextPage() {
+    if (!this.pagination.cursor) {
+      return false;
+    }
+    return this.twitchClient
+      .prefetchNextPage(this.pagination.cursor)
+      .then(res => localStorage.setItem("nextPage", JSON.stringify(res)));
+  }
+
+  prefetchPreviousPage() {
+    if (this.offset === 0) {
+      return false;
+    }
+    return this.twitchClient
+      .prefetchPreviousPage(this.pagination.cursor)
+      .then(res => localStorage.setItem("prevPage", JSON.stringify(res)));
   }
 }
