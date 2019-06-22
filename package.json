@@ -4,8 +4,8 @@
   "description": "Twitch API demo to get streams based on a query entered by a user",
   "main": "index.js",
   "scripts": {
-    "build": "parcel build index.html --experimental-scope-hoisting",
-    "start": "parcel index.html",
+    "build": "parcel build src/index.html --experimental-scope-hoisting",
+    "start": "parcel src/index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
