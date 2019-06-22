@@ -1,3 +1,5 @@
+const STREAM_BASE_URL = "https://www.twitch.tv/";
+
 export default class Grid {
   constructor(twitchClient) {
     this.data = [];
@@ -24,11 +26,16 @@ export default class Grid {
   createGridElement(row) {
     const mainContainer = document.createElement("div");
     const imageContainer = document.createElement("div");
+    const imageLink = document.createElement("a");
     const image = document.createElement("img");
     const dataContainer = document.createElement("div");
+    const dataTitleLink = document.createElement("a");
     const dataTitle = document.createElement("h2");
     const dataMetadata = document.createElement("p");
     const dataDescription = document.createElement("p");
+
+    dataTitleLink.href = `${STREAM_BASE_URL}${row.user_name}`;
+    imageLink.href = `${STREAM_BASE_URL}${row.user_name}`;
 
     const thumbnailURL = row.thumbnail_url.split("{width}x{height}");
     image.src = `${thumbnailURL[0]}${this.imageSizes.width}x${
@@ -40,8 +47,10 @@ export default class Grid {
     } viewers`;
     dataDescription.innerText = "Description!";
 
-    imageContainer.append(image);
-    dataContainer.append(dataTitle);
+    imageLink.append(image);
+    imageContainer.append(imageLink);
+    dataTitleLink.append(dataTitle);
+    dataContainer.append(dataTitleLink);
     dataContainer.append(dataMetadata);
     dataContainer.append(dataDescription);
 
@@ -127,6 +136,8 @@ export default class Grid {
   fill(response) {
     this.data = response.data;
     this.pagination = response.pagination;
+
+    console.log(this.data);
 
     this.cleanUp();
     this.createPagination();
