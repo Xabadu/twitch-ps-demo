@@ -44,5 +44,8 @@
       "eslint --fix",
       "git add"
     ]
+  },
+  "dependencies": {
+    "whatwg-fetch": "^3.0.0"
   }
 }

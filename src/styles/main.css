@@ -83,7 +83,7 @@ body {
   text-shadow: 1px 1px #2d2d2d;
 }
 
-#results-stats-container {
+#stats-container {
   border: 1px solid blue;
   display: flex;
   flex-direction: row;
@@ -91,22 +91,38 @@ body {
   justify-content: space-between;
 }
 
-#results-cards-container {
-  border: 1px solid orange;
-}
-
-#card {
+#stats-pagination {
   display: flex;
   flex-direction: row;
 }
 
-#card-image {
-  border: 1px solid lawngreen;
-  flex: 2;
+#stats-pagination a {
+  display: flex;
+  align-items: center;
 }
 
-#card-data {
+#cards-container {
+  border: 1px solid orange;
+}
+
+.card {
+  display: flex;
+  flex-direction: row;
+  margin: 1rem 0;
+}
+
+.card-image {
+  border: 1px solid lawngreen;
+  flex: 1;
+}
+
+.card-data {
   border: 1px solid slateblue;
-  flex: 8;
+  flex: 9;
   padding-left: 1.5rem;
+  max-height: 137px;
+}
+
+.hidden {
+  display: none;
 }
