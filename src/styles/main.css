@@ -69,7 +69,10 @@ body {
 
 #alert {
   flex: 1;
-  background: #fb4851;
+  background: #fff1f4;
+  border: solid #333;
+  border-color: #eb003c;
+  border-width: 0 0 0 6px;
   border-radius: 3px;
   align-items: center;
   margin-bottom: 10px;
@@ -78,16 +81,15 @@ body {
 #alert p {
   flex: 9.8;
   padding-left: 1.5rem;
-  color: white;
-  text-shadow: 1px 1px #2d2d2d;
+  color: #2d2d2d;
+  font-weight: 300;
 }
 
 #alert a {
   flex: 0.2;
   padding-left: 1.5rem;
-  text-shadow: 1px 1px #2d2d2d;
   text-decoration: none;
-  color: white;
+  color: #2d2d2d;
 }
 
 #stats-container {
@@ -160,24 +162,12 @@ body {
 
 .fade-in {
   animation-name: fade-in;
-  animation-duration: 1s;
+  animation-duration: 0.7s;
   animation-timing-function: ease;
 }
 
 .fade-out {
   animation-name: fade-out;
-  animation-duration: 1s;
-  animation-timing-function: ease;
-}
-
-.fade-in-fast {
-  animation-name: fade-in;
-  animation-duration: 0.3s;
-  animation-timing-function: ease;
-}
-
-.fade-out-fast {
-  animation-name: fade-out;
-  animation-duration: 0.3s;
+  animation-duration: 0.7s;
   animation-timing-function: ease;
 }

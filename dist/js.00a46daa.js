@@ -1004,50 +1004,46 @@ parcelRequire = (function(modules, cache, entry, globalName) {
         Object.defineProperty(exports, "__esModule", {
           value: true,
         });
-        exports.hideLoadingSpinner = exports.showLoadingSpinner = exports.hideError = exports.showError = void 0;
-        var errorContainer = document.querySelector("#alert");
-        var errorMessage = document.querySelector("#alert-message");
-        var loadingSpinnerContainer = document.querySelector(
-          "#loading-container",
-        );
+        exports.showLoading = exports.hideLoading = exports.showError = exports.hideError = void 0;
+        var alertContainer = document.querySelector("#alert");
+        var alertMessage = document.querySelector("#alert-message");
+        var loadingContainer = document.querySelector("#loading-container");
 
-        var showError = function showError(message) {
-          errorContainer.classList.remove("fade-out");
-          errorContainer.classList.remove("hidden");
-          errorMessage.innerText = message;
-          errorContainer.classList.add("fade-in");
-          errorContainer.classList.add("shown");
+        var hideElement = function hideElement(element) {
+          element.classList.replace("fade-in", "fade-out");
+          element.classList.replace("shown", "hidden");
         };
 
-        exports.showError = showError;
+        var showElement = function showElement(element) {
+          element.classList.replace("fade-out", "fade-in");
+          element.classList.replace("hidden", "shown");
+        };
 
         var hideError = function hideError() {
-          errorMessage.innerText = "";
-          errorContainer.classList.add("fade-out");
-          errorContainer.classList.add("hidden");
-          errorContainer.classList.remove("fade-in");
-          errorContainer.classList.remove("shown");
+          alertMessage.innerText = "";
+          hideElement(alertContainer);
         };
 
         exports.hideError = hideError;
 
-        var showLoadingSpinner = function showLoadingSpinner() {
-          loadingSpinnerContainer.classList.remove("fade-out-fast");
-          loadingSpinnerContainer.classList.remove("hidden");
-          loadingSpinnerContainer.classList.add("fade-in-fast");
-          loadingSpinnerContainer.classList.add("shown");
+        var showError = function showError(message) {
+          alertMessage.innerText = message;
+          showElement(alertContainer);
         };
 
-        exports.showLoadingSpinner = showLoadingSpinner;
+        exports.showError = showError;
 
-        var hideLoadingSpinner = function hideLoadingSpinner() {
-          loadingSpinnerContainer.classList.add("fade-out-fast");
-          loadingSpinnerContainer.classList.add("hidden");
-          loadingSpinnerContainer.classList.remove("fade-in-fast");
-          loadingSpinnerContainer.classList.remove("shown");
+        var hideLoading = function hideLoading() {
+          hideElement(loadingContainer);
         };
 
-        exports.hideLoadingSpinner = hideLoadingSpinner;
+        exports.hideLoading = hideLoading;
+
+        var showLoading = function showLoading() {
+          showElement(loadingContainer);
+        };
+
+        exports.showLoading = showLoading;
       },
       {},
     ],
@@ -1082,16 +1078,16 @@ parcelRequire = (function(modules, cache, entry, globalName) {
             if (searchInput.value !== "") {
               searchButton.setAttribute("disabled", true);
               (0, _notifications.hideError)();
-              (0, _notifications.showLoadingSpinner)();
+              (0, _notifications.showLoading)();
               twitchClient
                 .findGame(searchInput.value)
                 .then(twitchClient.getStreams)
                 .then(function(res) {
-                  (0, _notifications.hideLoadingSpinner)();
+                  (0, _notifications.hideLoading)();
                   grid.fill(res);
                 })
                 .catch(function(err) {
-                  (0, _notifications.hideLoadingSpinner)();
+                  (0, _notifications.hideLoading)();
                   (0, _notifications.showError)(err);
                 });
               searchButton.removeAttribute("disabled");
@@ -1164,7 +1160,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
           var hostname = "" || location.hostname;
           var protocol = location.protocol === "https:" ? "wss" : "ws";
           var ws = new WebSocket(
-            protocol + "://" + hostname + ":" + "52308" + "/",
+            protocol + "://" + hostname + ":" + "58772" + "/",
           );
 
           ws.onmessage = function(event) {
