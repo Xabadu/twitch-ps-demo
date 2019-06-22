@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" href="./styles/main.css" />
-    <script src="https://kit.fontawesome.com/4d87244547.js"></script>
     <title>Twitch PS Demo</title>
   </head>
   <body>
@@ -32,25 +31,16 @@
           Oh noes! Something went wrong while looking for your images. Please
           try again.
         </p>
-        <i id="close-alert" href="#"><i class="fas fa-times"></i></a>
+        <a id="close-alert" href="#"><i class="fas fa-times"></i></a>
       </div>
       <div id="results-container">
-        <div id="results-stats-container">
-          <div id="results-count">
-            <p>Total results: 123</p>
-          </div>
-          <div id="results-pagination">
-            <i class="fas fa-chevron-left"></i>
-            <span>1/10</span>
-            <i class="fas fa-chevron-right"></i>
-          </div>
-        </div>
-        <div id="results-cards-container">
-          <div id="card">
-            <div id="card-image">
+        <div id="stats-container"></div>
+        <div id="cards-container">
+          <div class="card">
+            <div class="card-image">
               <p>hello</p>
             </div>
-            <div id="card-data">
+            <div class="card-data">
               <h2>Stream display name</h2>
               <p>Game name - 1234 viewers</p>
               <p>Stream description text text text text text text</p>
@@ -60,4 +50,6 @@
       </div>
     </div>
   </body>
+  <script src="https://kit.fontawesome.com/4d87244547.js"></script>
+  <script src="./js/index.js"></script>
 </html>
