@@ -58,8 +58,13 @@ body {
   white-space: nowrap;
 }
 
-#loading-wrapper {
-  display: none;
+#loading-container {
+  justify-content: center;
+}
+
+#loading-container i {
+  font-size: 5rem;
+  color: lightgray;
 }
 
 #alert {
@@ -67,7 +72,7 @@ body {
   background: #fb4851;
   border-radius: 3px;
   align-items: center;
-  display: none;
+  margin-bottom: 10px;
 }
 
 #alert p {
@@ -81,6 +86,8 @@ body {
   flex: 0.2;
   padding-left: 1.5rem;
   text-shadow: 1px 1px #2d2d2d;
+  text-decoration: none;
+  color: white;
 }
 
 #stats-container {
@@ -123,6 +130,54 @@ body {
   max-height: 137px;
 }
 
+.shown {
+  display: flex;
+}
+
 .hidden {
   display: none;
+}
+
+/* Animations */
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.fade-in {
+  animation-name: fade-in;
+  animation-duration: 1s;
+  animation-timing-function: ease;
+}
+
+.fade-out {
+  animation-name: fade-out;
+  animation-duration: 1s;
+  animation-timing-function: ease;
+}
+
+.fade-in-fast {
+  animation-name: fade-in;
+  animation-duration: 0.3s;
+  animation-timing-function: ease;
+}
+
+.fade-out-fast {
+  animation-name: fade-out;
+  animation-duration: 0.3s;
+  animation-timing-function: ease;
 }

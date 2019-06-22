@@ -6,11 +6,16 @@ export default class TwitchAPI {
   }
 
   findGame(name) {
-    return this.getRequest(`games?name=${name}`);
+    return this.getRequest(`games?name=${encodeURIComponent(name)}`);
   }
 
   getStreams(game) {
-    return this.getRequest(`streams?game_id=${game.data[0].id}`);
+    if (game.data.length > 0) {
+      return this.getRequest(`streams?game_id=${game.data[0].id}`);
+    }
+    throw new Error(
+      "No games were found with your search. Please try a different one.",
+    );
   }
 
   getRequest(endpoint) {

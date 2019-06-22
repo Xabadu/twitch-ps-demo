@@ -1,4 +1,10 @@
 import Grid from "./grid";
+import {
+  hideError,
+  hideLoadingSpinner,
+  showError,
+  showLoadingSpinner,
+} from "./notifications";
 
 const initListeners = twitchClient => {
   const closeAlert = document.querySelector("#close-alert");
@@ -7,20 +13,26 @@ const initListeners = twitchClient => {
   const grid = new Grid();
 
   closeAlert.addEventListener("click", () => {
-    // hide alert
+    hideError();
   });
 
   searchButton.addEventListener("click", e => {
     e.preventDefault();
     if (searchInput.value !== "") {
       searchButton.setAttribute("disabled", true);
-      // Hide error
-      // Sanitize value
-      // Display loading
+      hideError();
+      showLoadingSpinner();
       twitchClient
         .findGame(searchInput.value)
         .then(twitchClient.getStreams)
-        .then(res => grid.fill(res));
+        .then(res => {
+          hideLoadingSpinner();
+          grid.fill(res);
+        })
+        .catch(err => {
+          hideLoadingSpinner();
+          showError(err);
+        });
       searchButton.removeAttribute("disabled");
     }
   });
