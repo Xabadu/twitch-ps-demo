@@ -774,14 +774,22 @@ parcelRequire = (function(modules, cache, entry, globalName) {
               {
                 key: "findGame",
                 value: function findGame(name) {
-                  return this.getRequest("games?name=".concat(name));
+                  return this.getRequest(
+                    "games?name=".concat(encodeURIComponent(name)),
+                  );
                 },
               },
               {
                 key: "getStreams",
                 value: function getStreams(game) {
-                  return this.getRequest(
-                    "streams?game_id=".concat(game.data[0].id),
+                  if (game.data.length > 0) {
+                    return this.getRequest(
+                      "streams?game_id=".concat(game.data[0].id),
+                    );
+                  }
+
+                  throw new Error(
+                    "No games were found with your search. Please try a different one.",
                   );
                 },
               },
@@ -868,7 +876,10 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                   var statsContainer = document.querySelector(
                     "#stats-container",
                   );
-                  statsContainer.classList.add("hidden");
+
+                  while (statsContainer.firstChild) {
+                    statsContainer.removeChild(statsContainer.firstChild);
+                  }
 
                   while (container.firstChild) {
                     container.removeChild(container.firstChild);
@@ -954,6 +965,8 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                   statsPagination.setAttribute("id", "stats-pagination");
                   statsContainer.append(statsCount);
                   statsContainer.append(statsPagination);
+                  statsContainer.classList.remove("hidden");
+                  statsContainer.classList.add("shown");
                 },
               },
               {
@@ -965,8 +978,6 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                   this.pagination = response.pagination;
                   this.cleanUp();
                   this.createPagination();
-                  console.log("data", this.data);
-                  console.log("pagination", this.pagination);
                   var cardsContainer = document.querySelector(
                     "#cards-container",
                   );
@@ -986,6 +997,60 @@ parcelRequire = (function(modules, cache, entry, globalName) {
       },
       {},
     ],
+    "js/dom/notifications.js": [
+      function(require, module, exports) {
+        "use strict";
+
+        Object.defineProperty(exports, "__esModule", {
+          value: true,
+        });
+        exports.hideLoadingSpinner = exports.showLoadingSpinner = exports.hideError = exports.showError = void 0;
+        var errorContainer = document.querySelector("#alert");
+        var errorMessage = document.querySelector("#alert-message");
+        var loadingSpinnerContainer = document.querySelector(
+          "#loading-container",
+        );
+
+        var showError = function showError(message) {
+          errorContainer.classList.remove("fade-out");
+          errorContainer.classList.remove("hidden");
+          errorMessage.innerText = message;
+          errorContainer.classList.add("fade-in");
+          errorContainer.classList.add("shown");
+        };
+
+        exports.showError = showError;
+
+        var hideError = function hideError() {
+          errorMessage.innerText = "";
+          errorContainer.classList.add("fade-out");
+          errorContainer.classList.add("hidden");
+          errorContainer.classList.remove("fade-in");
+          errorContainer.classList.remove("shown");
+        };
+
+        exports.hideError = hideError;
+
+        var showLoadingSpinner = function showLoadingSpinner() {
+          loadingSpinnerContainer.classList.remove("fade-out-fast");
+          loadingSpinnerContainer.classList.remove("hidden");
+          loadingSpinnerContainer.classList.add("fade-in-fast");
+          loadingSpinnerContainer.classList.add("shown");
+        };
+
+        exports.showLoadingSpinner = showLoadingSpinner;
+
+        var hideLoadingSpinner = function hideLoadingSpinner() {
+          loadingSpinnerContainer.classList.add("fade-out-fast");
+          loadingSpinnerContainer.classList.add("hidden");
+          loadingSpinnerContainer.classList.remove("fade-in-fast");
+          loadingSpinnerContainer.classList.remove("shown");
+        };
+
+        exports.hideLoadingSpinner = hideLoadingSpinner;
+      },
+      {},
+    ],
     "js/dom/listeners.js": [
       function(require, module, exports) {
         "use strict";
@@ -997,6 +1062,8 @@ parcelRequire = (function(modules, cache, entry, globalName) {
 
         var _grid = _interopRequireDefault(require("./grid"));
 
+        var _notifications = require("./notifications");
+
         function _interopRequireDefault(obj) {
           return obj && obj.__esModule ? obj : { default: obj };
         }
@@ -1007,21 +1074,25 @@ parcelRequire = (function(modules, cache, entry, globalName) {
           var searchInput = document.querySelector("#search-input");
           var grid = new _grid.default();
           closeAlert.addEventListener("click", function() {
-            // hide alert
+            (0, _notifications.hideError)();
           });
           searchButton.addEventListener("click", function(e) {
             e.preventDefault();
 
             if (searchInput.value !== "") {
-              searchButton.setAttribute("disabled", true); // Hide error
-              // Sanitize value
-              // Display loading
-
+              searchButton.setAttribute("disabled", true);
+              (0, _notifications.hideError)();
+              (0, _notifications.showLoadingSpinner)();
               twitchClient
                 .findGame(searchInput.value)
                 .then(twitchClient.getStreams)
                 .then(function(res) {
-                  return grid.fill(res);
+                  (0, _notifications.hideLoadingSpinner)();
+                  grid.fill(res);
+                })
+                .catch(function(err) {
+                  (0, _notifications.hideLoadingSpinner)();
+                  (0, _notifications.showError)(err);
                 });
               searchButton.removeAttribute("disabled");
             }
@@ -1031,7 +1102,10 @@ parcelRequire = (function(modules, cache, entry, globalName) {
         var _default = initListeners;
         exports.default = _default;
       },
-      { "./grid": "js/dom/grid.js" },
+      {
+        "./grid": "js/dom/grid.js",
+        "./notifications": "js/dom/notifications.js",
+      },
     ],
     "js/index.js": [
       function(require, module, exports) {
@@ -1090,7 +1164,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
           var hostname = "" || location.hostname;
           var protocol = location.protocol === "https:" ? "wss" : "ws";
           var ws = new WebSocket(
-            protocol + "://" + hostname + ":" + "53011" + "/",
+            protocol + "://" + hostname + ":" + "52308" + "/",
           );
 
           ws.onmessage = function(event) {

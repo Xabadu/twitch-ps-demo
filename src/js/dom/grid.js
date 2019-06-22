@@ -14,7 +14,9 @@ export default class Grid {
   cleanUp() {
     const container = document.querySelector("#cards-container");
     const statsContainer = document.querySelector("#stats-container");
-    statsContainer.classList.add("hidden");
+    while (statsContainer.firstChild) {
+      statsContainer.removeChild(statsContainer.firstChild);
+    }
     while (container.firstChild) {
       container.removeChild(container.firstChild);
     }
@@ -98,6 +100,8 @@ export default class Grid {
 
     statsContainer.append(statsCount);
     statsContainer.append(statsPagination);
+    statsContainer.classList.remove("hidden");
+    statsContainer.classList.add("shown");
   }
 
   fill(response) {

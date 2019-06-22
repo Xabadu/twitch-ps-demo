@@ -15,18 +15,15 @@
           <input id="search-button" type="submit" value="Search">
         </form>
       </div>
-      <div id="loading-wrapper">
-        <i class="fa fa-spinner fa-spin"></i>
+      <div id="loading-container" class="hidden">
+        <i class="fas fa-circle-notch fa-spin"></i>
       </div>
-      <div id="alert" role="alert">
-        <p>
-          Oh noes! Something went wrong while looking for your images. Please
-          try again.
-        </p>
+      <div id="alert" role="alert" class="hidden">
+        <p id="alert-message"></p>
         <a id="close-alert" href="#"><i class="fas fa-times"></i></a>
       </div>
       <div id="results-container">
-        <div id="stats-container"></div>
+        <div id="stats-container" class="hidden"></div>
         <div id="cards-container">
           <div class="card">
             <div class="card-image">
