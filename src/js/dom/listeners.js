@@ -1,9 +1,9 @@
 import Grid from "./grid";
 import {
   hideError,
-  hideLoadingSpinner,
+  hideLoading,
   showError,
-  showLoadingSpinner,
+  showLoading,
 } from "./notifications";
 
 const initListeners = twitchClient => {
@@ -21,16 +21,16 @@ const initListeners = twitchClient => {
     if (searchInput.value !== "") {
       searchButton.setAttribute("disabled", true);
       hideError();
-      showLoadingSpinner();
+      showLoading();
       twitchClient
         .findGame(searchInput.value)
         .then(twitchClient.getStreams)
         .then(res => {
-          hideLoadingSpinner();
+          hideLoading();
           grid.fill(res);
         })
         .catch(err => {
-          hideLoadingSpinner();
+          hideLoading();
           showError(err);
         });
       searchButton.removeAttribute("disabled");
