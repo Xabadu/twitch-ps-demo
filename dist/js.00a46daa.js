@@ -783,6 +783,8 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                 key: "getStreams",
                 value: function getStreams(game) {
                   if (game.data.length > 0) {
+                    localStorage.setItem("gameId", game.data[0].id);
+                    localStorage.setItem("gameName", game.data[0].name);
                     return this.getRequest(
                       "streams?game_id=".concat(game.data[0].id),
                     );
@@ -807,8 +809,38 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                       return res.json();
                     })
                     .catch(function(err) {
-                      return console.log(err);
+                      throw new Error(err);
                     });
+                },
+              },
+              {
+                key: "prefetchPreviousPage",
+                value: function prefetchPreviousPage(cursor) {
+                  var gameId = localStorage.getItem("gameId");
+
+                  if (!gameId || !cursor) {
+                    return false;
+                  }
+
+                  return this.getRequest(
+                    "streams?game_id="
+                      .concat(gameId, "&before=")
+                      .concat(cursor),
+                  );
+                },
+              },
+              {
+                key: "prefetchNextPage",
+                value: function prefetchNextPage(cursor) {
+                  var gameId = localStorage.getItem("gameId");
+
+                  if (!gameId || !cursor) {
+                    return false;
+                  }
+
+                  return this.getRequest(
+                    "streams?game_id=".concat(gameId, "&after=").concat(cursor),
+                  );
                 },
               },
             ]);
@@ -854,7 +886,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
         var Grid =
           /*#__PURE__*/
           (function() {
-            function Grid() {
+            function Grid(twitchClient) {
               _classCallCheck(this, Grid);
 
               this.data = [];
@@ -863,9 +895,8 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                 height: 167,
               };
               this.pagination = "";
-              this.page = {
-                offset: 0,
-              };
+              this.offset = 0;
+              this.twitchClient = twitchClient;
             }
 
             _createClass(Grid, [
@@ -905,10 +936,9 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                     .concat(this.imageSizes.height)
                     .concat(thumbnailURL[1]);
                   dataTitle.innerText = row.title;
-                  dataMetadata.innerText = "SUPER GAME - ".concat(
-                    row.viewer_count,
-                    " viewers",
-                  );
+                  dataMetadata.innerText = ""
+                    .concat(localStorage.getItem("gameName"), " - ")
+                    .concat(row.viewer_count, " viewers");
                   dataDescription.innerText = "Description!";
                   imageContainer.append(image);
                   dataContainer.append(dataTitle);
@@ -925,19 +955,21 @@ parcelRequire = (function(modules, cache, entry, globalName) {
               {
                 key: "createPagination",
                 value: function createPagination() {
+                  var _this = this;
+
                   var statsContainer = document.querySelector(
                     "#stats-container",
                   );
                   var statsCount = document.createElement("div");
                   var statsPagination = document.createElement("div");
                   var statsCountText = document.createElement("p");
-                  var total = this.page.offset + this.data.length;
+                  var total = this.offset + this.data.length;
                   statsCountText.innerText = "Showing results from "
-                    .concat(this.page.offset, " to ")
+                    .concat(this.offset, " to ")
                     .concat(total);
                   statsCount.append(statsCountText);
 
-                  if (this.page.offset > 0) {
+                  if (this.offset > 0) {
                     var previousResultsLink = document.createElement("a");
                     var previousResultsIcon = document.createElement("i");
                     var previousResultsText = document.createElement("p");
@@ -946,6 +978,15 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                     previousResultsText.innerText = "Previous";
                     previousResultsLink.append(previousResultsIcon);
                     previousResultsLink.append(previousResultsText);
+                    previousResultsLink.href = "#";
+                    previousResultsLink.addEventListener("click", function() {
+                      _this.offset = _this.offset - _this.data.length;
+                      var prevPage = JSON.parse(
+                        localStorage.getItem("prevPage"),
+                      );
+
+                      _this.fill(prevPage);
+                    });
                     statsPagination.append(previousResultsLink);
                   }
 
@@ -958,6 +999,20 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                     nextResultsText.innerText = "Next";
                     nextResultsLink.append(nextResultsText);
                     nextResultsLink.append(nextResultsIcon);
+                    nextResultsLink.href = "#";
+                    nextResultsLink.addEventListener("click", function() {
+                      _this.offset = _this.offset + _this.data.length;
+                      var prevPageData = JSON.stringify({
+                        data: _this.data,
+                        pagination: _this.pagination,
+                      });
+                      localStorage.setItem("prevPage", prevPageData);
+                      var nextPage = JSON.parse(
+                        localStorage.getItem("nextPage"),
+                      );
+
+                      _this.fill(nextPage);
+                    });
                     statsPagination.append(nextResultsLink);
                   }
 
@@ -972,7 +1027,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
               {
                 key: "fill",
                 value: function fill(response) {
-                  var _this = this;
+                  var _this2 = this;
 
                   this.data = response.data;
                   this.pagination = response.pagination;
@@ -982,10 +1037,46 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                     "#cards-container",
                   );
                   this.data.forEach(function(row) {
-                    var card = _this.createGridElement(row);
+                    var card = _this2.createGridElement(row);
 
                     cardsContainer.append(card);
                   });
+                  this.prefetchPreviousPage();
+                  this.prefetchNextPage();
+                },
+              },
+              {
+                key: "prefetchNextPage",
+                value: function prefetchNextPage() {
+                  if (!this.pagination.cursor) {
+                    return false;
+                  }
+
+                  return this.twitchClient
+                    .prefetchNextPage(this.pagination.cursor)
+                    .then(function(res) {
+                      return localStorage.setItem(
+                        "nextPage",
+                        JSON.stringify(res),
+                      );
+                    });
+                },
+              },
+              {
+                key: "prefetchPreviousPage",
+                value: function prefetchPreviousPage() {
+                  if (this.offset === 0) {
+                    return false;
+                  }
+
+                  return this.twitchClient
+                    .prefetchPreviousPage(this.pagination.cursor)
+                    .then(function(res) {
+                      return localStorage.setItem(
+                        "prevPage",
+                        JSON.stringify(res),
+                      );
+                    });
                 },
               },
             ]);
@@ -1068,7 +1159,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
           var closeAlert = document.querySelector("#close-alert");
           var searchButton = document.querySelector("#search-button");
           var searchInput = document.querySelector("#search-input");
-          var grid = new _grid.default();
+          var grid = new _grid.default(twitchClient);
           closeAlert.addEventListener("click", function() {
             (0, _notifications.hideError)();
           });
@@ -1160,7 +1251,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
           var hostname = "" || location.hostname;
           var protocol = location.protocol === "https:" ? "wss" : "ws";
           var ws = new WebSocket(
-            protocol + "://" + hostname + ":" + "58772" + "/",
+            protocol + "://" + hostname + ":" + "57507" + "/",
           );
 
           ws.onmessage = function(event) {
