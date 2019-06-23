@@ -1006,7 +1006,6 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                   var dataTitle = document.createElement("h2");
                   var gameMetadata = document.createElement("span");
                   var viewersMetadata = document.createElement("span");
-                  var dataDescription = document.createElement("p");
                   var iconGame = document.createElement("i");
                   var iconViewers = document.createElement("i");
                   mainContainer.classList.add("hidden");
@@ -1043,20 +1042,18 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                   iconViewers.classList.add("fa-users");
                   gameMetadata.append(iconGame);
                   gameMetadata.append(
-                    " ".concat(localStorage.getItem("gameName"), " \u2022 "),
+                    " ".concat(localStorage.getItem("gameName"), " "),
                   );
                   viewersMetadata.append(iconViewers);
                   viewersMetadata.append(
                     " ".concat(row.viewer_count, " viewers."),
                   );
-                  dataDescription.innerText = "Description!";
                   imageLink.append(image);
                   imageContainer.append(imageLink);
                   dataTitleLink.append(dataTitle);
                   dataContainer.append(dataTitleLink);
                   dataContainer.append(gameMetadata);
                   dataContainer.append(viewersMetadata);
-                  dataContainer.append(dataDescription);
                   mainContainer.append(imageContainer);
                   mainContainer.append(dataContainer);
                   mainContainer.classList.add("card");
@@ -1344,7 +1341,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
           var hostname = "" || location.hostname;
           var protocol = location.protocol === "https:" ? "wss" : "ws";
           var ws = new WebSocket(
-            protocol + "://" + hostname + ":" + "62719" + "/",
+            protocol + "://" + hostname + ":" + "50498" + "/",
           );
 
           ws.onmessage = function(event) {
