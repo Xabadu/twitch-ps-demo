@@ -791,7 +791,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                   }
 
                   throw new Error(
-                    "No games were found with your search. Please try a different one.",
+                    "No streams found for that game. Please try a different one.",
                   );
                 },
               },
@@ -852,6 +852,75 @@ parcelRequire = (function(modules, cache, entry, globalName) {
       },
       {},
     ],
+    "js/dom/elements.js": [
+      function(require, module, exports) {
+        "use strict";
+
+        Object.defineProperty(exports, "__esModule", {
+          value: true,
+        });
+        exports.showResults = exports.hideResults = exports.showError = exports.hideError = exports.enableButton = exports.disableButton = void 0;
+        var alertContainer = document.querySelector("#alert");
+        var alertMessage = document.querySelector("#alert-message");
+        var loadingIcon = document.querySelector("#loading-icon");
+        var resultsContainer = document.querySelector("#results-container");
+        var searchButton = document.querySelector("#search-button");
+        var searchButtonText = document.querySelector("#search-button span");
+
+        var hideElement = function hideElement(element) {
+          return element.classList.add("hidden");
+        };
+
+        var showElement = function showElement(element) {
+          return element.classList.remove("hidden");
+        };
+
+        var disableButton = function disableButton() {
+          searchButtonText.innerText = "";
+          searchButton.classList.replace("button-active", "button-inactive");
+          showElement(loadingIcon);
+        };
+
+        exports.disableButton = disableButton;
+
+        var enableButton = function enableButton() {
+          hideElement(loadingIcon);
+          searchButtonText.innerText = "Search";
+          searchButton.classList.replace("button-inactive", "button-active");
+        };
+
+        exports.enableButton = enableButton;
+
+        var hideError = function hideError() {
+          alertMessage.innerText = "";
+          alertContainer.classList.replace("fade-in", "fade-out");
+          alertContainer.classList.replace("shown", "hidden");
+        };
+
+        exports.hideError = hideError;
+
+        var showError = function showError(message) {
+          alertMessage.innerText = message;
+          alertContainer.classList.replace("fade-out", "fade-in");
+          alertContainer.classList.replace("hidden", "shown");
+        };
+
+        exports.showError = showError;
+
+        var hideResults = function hideResults() {
+          hideElement(resultsContainer);
+        };
+
+        exports.hideResults = hideResults;
+
+        var showResults = function showResults() {
+          showElement(resultsContainer);
+        };
+
+        exports.showResults = showResults;
+      },
+      {},
+    ],
     "js/dom/grid.js": [
       function(require, module, exports) {
         "use strict";
@@ -860,6 +929,8 @@ parcelRequire = (function(modules, cache, entry, globalName) {
           value: true,
         });
         exports.default = void 0;
+
+        var _elements = require("./elements");
 
         function _classCallCheck(instance, Constructor) {
           if (!(instance instanceof Constructor)) {
@@ -896,6 +967,8 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                 width: 300,
                 height: 167,
               };
+              this.imagesLoaded = 0;
+              this.pageSize = 0;
               this.pagination = "";
               this.offset = 0;
               this.twitchClient = twitchClient;
@@ -922,6 +995,8 @@ parcelRequire = (function(modules, cache, entry, globalName) {
               {
                 key: "createGridElement",
                 value: function createGridElement(row) {
+                  var _this = this;
+
                   var mainContainer = document.createElement("div");
                   var imageContainer = document.createElement("div");
                   var imageLink = document.createElement("a");
@@ -934,6 +1009,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                   var dataDescription = document.createElement("p");
                   var iconGame = document.createElement("i");
                   var iconViewers = document.createElement("i");
+                  mainContainer.classList.add("hidden");
                   dataTitleLink.href = ""
                     .concat(STREAM_BASE_URL)
                     .concat(row.user_name);
@@ -948,6 +1024,18 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                     .concat(this.imageSizes.width, "x")
                     .concat(this.imageSizes.height)
                     .concat(thumbnailURL[1]);
+                  image.addEventListener("load", function() {
+                    mainContainer.classList.replace("hidden", "fade-in");
+                    _this.imagesLoaded += 1;
+
+                    if (_this.imagesLoaded === 1) {
+                      (0, _elements.showResults)();
+                    }
+
+                    if (_this.imagesLoaded === _this.pageSize) {
+                      (0, _elements.enableButton)();
+                    }
+                  });
                   dataTitle.innerText = row.title;
                   iconGame.classList.add("fa");
                   iconGame.classList.add("fa-gamepad");
@@ -955,7 +1043,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                   iconViewers.classList.add("fa-users");
                   gameMetadata.append(iconGame);
                   gameMetadata.append(
-                    " ".concat(localStorage.getItem("gameName"), " | "),
+                    " ".concat(localStorage.getItem("gameName"), " \u2022 "),
                   );
                   viewersMetadata.append(iconViewers);
                   viewersMetadata.append(
@@ -980,7 +1068,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
               {
                 key: "createPagination",
                 value: function createPagination() {
-                  var _this = this;
+                  var _this2 = this;
 
                   var statsContainer = document.querySelector(
                     "#stats-container",
@@ -1001,42 +1089,54 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                     previousResultsIcon.classList.add("fas");
                     previousResultsIcon.classList.add("fa-chevron-left");
                     previousResultsText.innerText = "Previous";
+                    previousResultsLink.classList.add("pagination-link");
                     previousResultsLink.append(previousResultsIcon);
                     previousResultsLink.append(previousResultsText);
                     previousResultsLink.href = "#";
                     previousResultsLink.addEventListener("click", function() {
-                      _this.offset = _this.offset - _this.data.length;
+                      _this2.offset = _this2.offset - _this2.data.length;
                       var prevPage = JSON.parse(
                         localStorage.getItem("prevPage"),
                       );
 
-                      _this.fill(prevPage);
+                      _this2.fill(prevPage);
                     });
                     statsPagination.append(previousResultsLink);
                   }
 
-                  if (this.pagination.cursor) {
+                  if (this.offset > 0 && this.pagination.cursor) {
+                    var separator = document.createElement("span");
+                    separator.innerText = "••";
+                    separator.classList.add("pagination-separator");
+                    statsPagination.append(separator);
+                  }
+
+                  if (
+                    this.pageSize === 20 ||
+                    (this.pageSize < 20 && this.offset > 20)
+                  ) {
                     var nextResultsLink = document.createElement("a");
                     var nextResultsIcon = document.createElement("i");
                     var nextResultsText = document.createElement("p");
                     nextResultsIcon.classList.add("fas");
                     nextResultsIcon.classList.add("fa-chevron-right");
                     nextResultsText.innerText = "Next";
+                    nextResultsLink.classList.add("pagination-link");
                     nextResultsLink.append(nextResultsText);
                     nextResultsLink.append(nextResultsIcon);
                     nextResultsLink.href = "#";
                     nextResultsLink.addEventListener("click", function() {
-                      _this.offset = _this.offset + _this.data.length;
+                      _this2.offset = _this2.offset + _this2.data.length;
                       var prevPageData = JSON.stringify({
-                        data: _this.data,
-                        pagination: _this.pagination,
+                        data: _this2.data,
+                        pagination: _this2.pagination,
                       });
                       localStorage.setItem("prevPage", prevPageData);
                       var nextPage = JSON.parse(
                         localStorage.getItem("nextPage"),
                       );
 
-                      _this.fill(nextPage);
+                      _this2.fill(nextPage);
                     });
                     statsPagination.append(nextResultsLink);
                   }
@@ -1052,18 +1152,30 @@ parcelRequire = (function(modules, cache, entry, globalName) {
               {
                 key: "fill",
                 value: function fill(response) {
-                  var _this2 = this;
+                  var _this3 = this;
 
+                  var reset =
+                    arguments.length > 1 && arguments[1] !== undefined
+                      ? arguments[1]
+                      : false;
+
+                  if (reset) {
+                    this.offset = 0;
+                  }
+
+                  this.imagesLoaded = 0;
                   this.data = response.data;
                   this.pagination = response.pagination;
-                  console.log(this.data);
+                  this.pageSize = this.data.length;
+                  (0, _elements.hideResults)();
+                  (0, _elements.disableButton)();
                   this.cleanUp();
                   this.createPagination();
                   var cardsContainer = document.querySelector(
                     "#cards-container",
                   );
                   this.data.forEach(function(row) {
-                    var card = _this2.createGridElement(row);
+                    var card = _this3.createGridElement(row);
 
                     cardsContainer.append(card);
                   });
@@ -1112,57 +1224,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
 
         exports.default = Grid;
       },
-      {},
-    ],
-    "js/dom/notifications.js": [
-      function(require, module, exports) {
-        "use strict";
-
-        Object.defineProperty(exports, "__esModule", {
-          value: true,
-        });
-        exports.showLoading = exports.hideLoading = exports.showError = exports.hideError = void 0;
-        var alertContainer = document.querySelector("#alert");
-        var alertMessage = document.querySelector("#alert-message");
-        var loadingContainer = document.querySelector("#loading-container");
-
-        var hideElement = function hideElement(element) {
-          element.classList.replace("fade-in", "fade-out");
-          element.classList.replace("shown", "hidden");
-        };
-
-        var showElement = function showElement(element) {
-          element.classList.replace("fade-out", "fade-in");
-          element.classList.replace("hidden", "shown");
-        };
-
-        var hideError = function hideError() {
-          alertMessage.innerText = "";
-          hideElement(alertContainer);
-        };
-
-        exports.hideError = hideError;
-
-        var showError = function showError(message) {
-          alertMessage.innerText = message;
-          showElement(alertContainer);
-        };
-
-        exports.showError = showError;
-
-        var hideLoading = function hideLoading() {
-          hideElement(loadingContainer);
-        };
-
-        exports.hideLoading = hideLoading;
-
-        var showLoading = function showLoading() {
-          showElement(loadingContainer);
-        };
-
-        exports.showLoading = showLoading;
-      },
-      {},
+      { "./elements": "js/dom/elements.js" },
     ],
     "js/dom/listeners.js": [
       function(require, module, exports) {
@@ -1175,7 +1237,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
 
         var _grid = _interopRequireDefault(require("./grid"));
 
-        var _notifications = require("./notifications");
+        var _elements = require("./elements");
 
         function _interopRequireDefault(obj) {
           return obj && obj.__esModule ? obj : { default: obj };
@@ -1187,27 +1249,35 @@ parcelRequire = (function(modules, cache, entry, globalName) {
           var searchInput = document.querySelector("#search-input");
           var grid = new _grid.default(twitchClient);
           closeAlert.addEventListener("click", function() {
-            (0, _notifications.hideError)();
+            (0, _elements.hideError)();
           });
           searchButton.addEventListener("click", function(e) {
             e.preventDefault();
 
             if (searchInput.value !== "") {
               searchButton.setAttribute("disabled", true);
-              (0, _notifications.hideError)();
-              (0, _notifications.showLoading)();
+              (0, _elements.disableButton)();
+              (0, _elements.hideError)();
               twitchClient
                 .findGame(searchInput.value)
                 .then(twitchClient.getStreams)
                 .then(function(res) {
-                  (0, _notifications.hideLoading)();
-                  grid.fill(res);
+                  (0, _elements.enableButton)();
+                  searchButton.removeAttribute("disabled");
+
+                  if (res.data.length > 0) {
+                    grid.fill(res, true);
+                  } else {
+                    (0, _elements.showError)(
+                      "No streams found for that game. Please try a different one.",
+                    );
+                  }
                 })
                 .catch(function(err) {
-                  (0, _notifications.hideLoading)();
-                  (0, _notifications.showError)(err);
+                  (0, _elements.showError)(err);
+                  (0, _elements.enableButton)();
+                  searchButton.removeAttribute("disabled");
                 });
-              searchButton.removeAttribute("disabled");
             }
           });
         };
@@ -1215,10 +1285,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
         var _default = initListeners;
         exports.default = _default;
       },
-      {
-        "./grid": "js/dom/grid.js",
-        "./notifications": "js/dom/notifications.js",
-      },
+      { "./grid": "js/dom/grid.js", "./elements": "js/dom/elements.js" },
     ],
     "js/index.js": [
       function(require, module, exports) {
@@ -1277,7 +1344,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
           var hostname = "" || location.hostname;
           var protocol = location.protocol === "https:" ? "wss" : "ws";
           var ws = new WebSocket(
-            protocol + "://" + hostname + ":" + "60825" + "/",
+            protocol + "://" + hostname + ":" + "62719" + "/",
           );
 
           ws.onmessage = function(event) {

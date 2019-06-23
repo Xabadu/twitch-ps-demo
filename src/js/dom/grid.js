@@ -1,3 +1,10 @@
+import {
+  disableButton,
+  enableButton,
+  showResults,
+  hideResults,
+} from "./elements";
+
 const STREAM_BASE_URL = "https://www.twitch.tv/";
 
 export default class Grid {
@@ -7,6 +14,8 @@ export default class Grid {
       width: 300,
       height: 167,
     };
+    this.imagesLoaded = 0;
+    this.pageSize = 0;
     this.pagination = "";
     this.offset = 0;
     this.twitchClient = twitchClient;
@@ -37,6 +46,7 @@ export default class Grid {
     const iconGame = document.createElement("i");
     const iconViewers = document.createElement("i");
 
+    mainContainer.classList.add("hidden");
     dataTitleLink.href = `${STREAM_BASE_URL}${row.user_name}`;
     imageLink.href = `${STREAM_BASE_URL}${row.user_name}`;
 
@@ -44,6 +54,17 @@ export default class Grid {
     image.src = `${thumbnailURL[0]}${this.imageSizes.width}x${
       this.imageSizes.height
     }${thumbnailURL[1]}`;
+    image.addEventListener("load", () => {
+      mainContainer.classList.replace("hidden", "fade-in");
+      this.imagesLoaded += 1;
+      if (this.imagesLoaded === 1) {
+        showResults();
+      }
+      if (this.imagesLoaded === this.pageSize) {
+        enableButton();
+      }
+    });
+
     dataTitle.innerText = row.title;
     iconGame.classList.add("fa");
     iconGame.classList.add("fa-gamepad");
@@ -51,7 +72,7 @@ export default class Grid {
     iconViewers.classList.add("fa-users");
 
     gameMetadata.append(iconGame);
-    gameMetadata.append(` ${localStorage.getItem("gameName")} | `);
+    gameMetadata.append(` ${localStorage.getItem("gameName")} • `);
 
     viewersMetadata.append(iconViewers);
     viewersMetadata.append(` ${row.viewer_count} viewers.`);
@@ -96,6 +117,7 @@ export default class Grid {
       previousResultsIcon.classList.add("fa-chevron-left");
       previousResultsText.innerText = "Previous";
 
+      previousResultsLink.classList.add("pagination-link");
       previousResultsLink.append(previousResultsIcon);
       previousResultsLink.append(previousResultsText);
       previousResultsLink.href = "#";
@@ -109,7 +131,14 @@ export default class Grid {
       statsPagination.append(previousResultsLink);
     }
 
-    if (this.pagination.cursor) {
+    if (this.offset > 0 && this.pagination.cursor) {
+      const separator = document.createElement("span");
+      separator.innerText = "••";
+      separator.classList.add("pagination-separator");
+      statsPagination.append(separator);
+    }
+
+    if (this.pageSize === 20 || (this.pageSize < 20 && this.offset > 20)) {
       const nextResultsLink = document.createElement("a");
       const nextResultsIcon = document.createElement("i");
       const nextResultsText = document.createElement("p");
@@ -118,6 +147,7 @@ export default class Grid {
       nextResultsIcon.classList.add("fa-chevron-right");
       nextResultsText.innerText = "Next";
 
+      nextResultsLink.classList.add("pagination-link");
       nextResultsLink.append(nextResultsText);
       nextResultsLink.append(nextResultsIcon);
       nextResultsLink.href = "#";
@@ -145,19 +175,27 @@ export default class Grid {
     statsContainer.classList.add("shown");
   }
 
-  fill(response) {
+  fill(response, reset = false) {
+    if (reset) {
+      this.offset = 0;
+    }
+
+    this.imagesLoaded = 0;
     this.data = response.data;
     this.pagination = response.pagination;
+    this.pageSize = this.data.length;
 
-    console.log(this.data);
-
+    hideResults();
+    disableButton();
     this.cleanUp();
     this.createPagination();
+
     const cardsContainer = document.querySelector("#cards-container");
     this.data.forEach(row => {
       const card = this.createGridElement(row);
       cardsContainer.append(card);
     });
+
     this.prefetchPreviousPage();
     this.prefetchNextPage();
   }
