@@ -1,15 +1,28 @@
-/* Normalize */
 /* CSS Variables */
+
+:root {
+  --base-dark: #2d2d2d;
+  --base-light: #f2f2f2;
+  --base-box-shadow: rgba(10, 10, 10, 0.1);
+  --dark-gray: #474646;
+  --light-gray: #ccc;
+  --light-red: #fff1f4;
+  --dark-red: #eb003c;
+  --twitch-dark-purple: #4b367c;
+  --twitch-light-purple: #7353ad;
+}
 
 body {
   margin: 0;
   padding: 0;
   height: 100vh;
   font-family: Arial, Helvetica, sans-serif;
+  color: var(--base-dark);
 }
 
 a {
   text-decoration: none;
+  color: var(--base-dark);
 }
 
 #container {
@@ -42,17 +55,22 @@ a {
   height: 2.25rem;
   line-height: 1.5rem;
   padding: calc(0.375em - 1px) calc(0.625em - 1px);
-  border-color: lightgray;
-  color: darkgray;
-  box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1);
+  border-color: var(--light-gray);
+  color: var(--base-dark);
+  box-shadow: inset 0 1px 2px var(--base-box-shadow);
+}
+
+#search-container input[type="text"]:focus {
+  outline-color: var(--twitch-dark-purple);
+  outline-width: 1px;
 }
 
 #search-container input[type="submit"] {
   flex: 1.5;
-  background-color: darkgray;
-  color: white;
+  background-color: var(--twitch-dark-purple);
+  color: var(--base-light);
   border-radius: 3px;
-  border: 1px solid transparent;
+  border: 1px solid var(--twitch-light-purple);
   font-size: 1rem;
   height: 3rem;
   line-height: 1.5rem;
@@ -68,14 +86,14 @@ a {
 
 #loading-container i {
   font-size: 5rem;
-  color: lightgray;
+  color: var(--light-gray);
 }
 
 #alert {
   flex: 1;
-  background: #fff1f4;
-  border: solid #333;
-  border-color: #eb003c;
+  background: var(--light-red);
+  border: solid var(--base-dark);
+  border-color: var(--dark-red);
   border-width: 0 0 0 6px;
   border-radius: 3px;
   align-items: center;
@@ -85,7 +103,7 @@ a {
 #alert p {
   flex: 9.8;
   padding-left: 1.5rem;
-  color: #2d2d2d;
+  color: var(--base-dark);
   font-weight: 300;
 }
 
@@ -93,7 +111,7 @@ a {
   flex: 0.2;
   padding-left: 1.5rem;
   text-decoration: none;
-  color: #2d2d2d;
+  color: var(--base-dark);
 }
 
 #stats-container {
@@ -129,11 +147,24 @@ a {
   flex: 1;
 }
 
+.card-image img {
+  border-radius: 3px;
+}
+
 .card-data {
   border: 1px solid slateblue;
   flex: 9;
+  color: var(--base-dark);
   padding-left: 1.5rem;
   max-height: 137px;
+}
+
+.card-data span {
+  color: var(--dark-gray);
+}
+
+.card-data i {
+  color: var(--twitch-light-purple);
 }
 
 .shown {

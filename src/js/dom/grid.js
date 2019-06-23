@@ -31,8 +31,11 @@ export default class Grid {
     const dataContainer = document.createElement("div");
     const dataTitleLink = document.createElement("a");
     const dataTitle = document.createElement("h2");
-    const dataMetadata = document.createElement("p");
+    const gameMetadata = document.createElement("span");
+    const viewersMetadata = document.createElement("span");
     const dataDescription = document.createElement("p");
+    const iconGame = document.createElement("i");
+    const iconViewers = document.createElement("i");
 
     dataTitleLink.href = `${STREAM_BASE_URL}${row.user_name}`;
     imageLink.href = `${STREAM_BASE_URL}${row.user_name}`;
@@ -42,16 +45,25 @@ export default class Grid {
       this.imageSizes.height
     }${thumbnailURL[1]}`;
     dataTitle.innerText = row.title;
-    dataMetadata.innerText = `${localStorage.getItem("gameName")} - ${
-      row.viewer_count
-    } viewers`;
+    iconGame.classList.add("fa");
+    iconGame.classList.add("fa-gamepad");
+    iconViewers.classList.add("fa");
+    iconViewers.classList.add("fa-users");
+
+    gameMetadata.append(iconGame);
+    gameMetadata.append(` ${localStorage.getItem("gameName")} | `);
+
+    viewersMetadata.append(iconViewers);
+    viewersMetadata.append(` ${row.viewer_count} viewers.`);
+
     dataDescription.innerText = "Description!";
 
     imageLink.append(image);
     imageContainer.append(imageLink);
     dataTitleLink.append(dataTitle);
     dataContainer.append(dataTitleLink);
-    dataContainer.append(dataMetadata);
+    dataContainer.append(gameMetadata);
+    dataContainer.append(viewersMetadata);
     dataContainer.append(dataDescription);
 
     mainContainer.append(imageContainer);
