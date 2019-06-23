@@ -929,8 +929,11 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                   var dataContainer = document.createElement("div");
                   var dataTitleLink = document.createElement("a");
                   var dataTitle = document.createElement("h2");
-                  var dataMetadata = document.createElement("p");
+                  var gameMetadata = document.createElement("span");
+                  var viewersMetadata = document.createElement("span");
                   var dataDescription = document.createElement("p");
+                  var iconGame = document.createElement("i");
+                  var iconViewers = document.createElement("i");
                   dataTitleLink.href = ""
                     .concat(STREAM_BASE_URL)
                     .concat(row.user_name);
@@ -946,15 +949,25 @@ parcelRequire = (function(modules, cache, entry, globalName) {
                     .concat(this.imageSizes.height)
                     .concat(thumbnailURL[1]);
                   dataTitle.innerText = row.title;
-                  dataMetadata.innerText = ""
-                    .concat(localStorage.getItem("gameName"), " - ")
-                    .concat(row.viewer_count, " viewers");
+                  iconGame.classList.add("fa");
+                  iconGame.classList.add("fa-gamepad");
+                  iconViewers.classList.add("fa");
+                  iconViewers.classList.add("fa-users");
+                  gameMetadata.append(iconGame);
+                  gameMetadata.append(
+                    " ".concat(localStorage.getItem("gameName"), " | "),
+                  );
+                  viewersMetadata.append(iconViewers);
+                  viewersMetadata.append(
+                    " ".concat(row.viewer_count, " viewers."),
+                  );
                   dataDescription.innerText = "Description!";
                   imageLink.append(image);
                   imageContainer.append(imageLink);
                   dataTitleLink.append(dataTitle);
                   dataContainer.append(dataTitleLink);
-                  dataContainer.append(dataMetadata);
+                  dataContainer.append(gameMetadata);
+                  dataContainer.append(viewersMetadata);
                   dataContainer.append(dataDescription);
                   mainContainer.append(imageContainer);
                   mainContainer.append(dataContainer);
@@ -1264,7 +1277,7 @@ parcelRequire = (function(modules, cache, entry, globalName) {
           var hostname = "" || location.hostname;
           var protocol = location.protocol === "https:" ? "wss" : "ws";
           var ws = new WebSocket(
-            protocol + "://" + hostname + ":" + "63478" + "/",
+            protocol + "://" + hostname + ":" + "60825" + "/",
           );
 
           ws.onmessage = function(event) {
