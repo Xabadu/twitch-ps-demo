@@ -42,7 +42,6 @@ export default class Grid {
     const dataTitle = document.createElement("h2");
     const gameMetadata = document.createElement("span");
     const viewersMetadata = document.createElement("span");
-    const dataDescription = document.createElement("p");
     const iconGame = document.createElement("i");
     const iconViewers = document.createElement("i");
 
@@ -72,12 +71,10 @@ export default class Grid {
     iconViewers.classList.add("fa-users");
 
     gameMetadata.append(iconGame);
-    gameMetadata.append(` ${localStorage.getItem("gameName")} • `);
+    gameMetadata.append(` ${localStorage.getItem("gameName")} `);
 
     viewersMetadata.append(iconViewers);
     viewersMetadata.append(` ${row.viewer_count} viewers.`);
-
-    dataDescription.innerText = "Description!";
 
     imageLink.append(image);
     imageContainer.append(imageLink);
@@ -85,7 +82,6 @@ export default class Grid {
     dataContainer.append(dataTitleLink);
     dataContainer.append(gameMetadata);
     dataContainer.append(viewersMetadata);
-    dataContainer.append(dataDescription);
 
     mainContainer.append(imageContainer);
     mainContainer.append(dataContainer);
