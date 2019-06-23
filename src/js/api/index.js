@@ -16,7 +16,7 @@ export default class TwitchAPI {
       return this.getRequest(`streams?game_id=${game.data[0].id}`);
     }
     throw new Error(
-      "No games were found with your search. Please try a different one.",
+      "No streams found for that game. Please try a different one.",
     );
   }
 

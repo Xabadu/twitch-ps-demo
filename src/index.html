@@ -13,38 +13,26 @@
         <form>
           <input
             id="search-input"
-            placeholder="Search for games (i.e Just Cause 4)"
+            placeholder="Search for games"
             type="text"
             autocomplete="off"
             autocorrect="off"
             autocapitalize="none"
             spellcheck="false"
           />
-          <input id="search-button" type="submit" value="Search" />
+          <button id="search-button" class="button-active">
+            <span>Search</span>
+            <i id="loading-icon" class="fas fa-circle-notch fa-spin hidden"></i>
+          </button>
         </form>
-      </div>
-      <div id="loading-container" class="hidden">
-        <i class="fas fa-circle-notch fa-spin"></i>
       </div>
       <div id="alert" role="alert" class="hidden">
         <p id="alert-message"></p>
         <a id="close-alert" href="#"><i class="fas fa-times"></i></a>
       </div>
-      <div id="results-container">
-        <div id="stats-container" class="hidden"></div>
-        <div id="cards-container">
-          <div class="card">
-            <div class="card-image">
-              <p>hello</p>
-            </div>
-            <div class="card-data">
-              <h2>Stream display name</h2>
-              <span> <i class="fa fa-gamepad"></i> Game name - </span>
-              <span> <i class="fa fa-users"></i> 1234 viewers </span>
-              <p>Stream description text text text text text text</p>
-            </div>
-          </div>
-        </div>
+      <div id="results-container" class="hidden">
+        <div id="stats-container"></div>
+        <div id="cards-container"></div>
       </div>
     </div>
   </body>

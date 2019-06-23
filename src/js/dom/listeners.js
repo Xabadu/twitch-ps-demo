@@ -1,10 +1,5 @@
 import Grid from "./grid";
-import {
-  hideError,
-  hideLoading,
-  showError,
-  showLoading,
-} from "./notifications";
+import { enableButton, disableButton, hideError, showError } from "./elements";
 
 const initListeners = twitchClient => {
   const closeAlert = document.querySelector("#close-alert");
@@ -20,20 +15,27 @@ const initListeners = twitchClient => {
     e.preventDefault();
     if (searchInput.value !== "") {
       searchButton.setAttribute("disabled", true);
+      disableButton();
       hideError();
-      showLoading();
       twitchClient
         .findGame(searchInput.value)
         .then(twitchClient.getStreams)
         .then(res => {
-          hideLoading();
-          grid.fill(res);
+          enableButton();
+          searchButton.removeAttribute("disabled");
+          if (res.data.length > 0) {
+            grid.fill(res, true);
+          } else {
+            showError(
+              "No streams found for that game. Please try a different one.",
+            );
+          }
         })
         .catch(err => {
-          hideLoading();
           showError(err);
+          enableButton();
+          searchButton.removeAttribute("disabled");
         });
-      searchButton.removeAttribute("disabled");
     }
   });
 };
