@@ -4,36 +4,66 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta
+      name="Description"
+      content="Demo app to look for active streams on Twitch related to an input query."
+    />
     <link rel="stylesheet" href="./styles/main.css" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./assets/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./assets/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./assets/favicon-16x16.png"
+    />
+    <link rel="manifest" href="./assets/site.webmanifest" />
     <title>Twitch PS Demo</title>
   </head>
   <body>
     <div id="container">
-      <div id="search-container">
-        <form>
-          <input
-            id="search-input"
-            placeholder="Search for games"
-            type="text"
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="none"
-            spellcheck="false"
-          />
-          <button id="search-button" class="button-active">
-            <span>Search</span>
-            <i id="loading-icon" class="fas fa-circle-notch fa-spin hidden"></i>
-          </button>
-        </form>
-      </div>
+      <header>
+        <div id="search-container">
+          <form>
+            <input
+              id="search-input"
+              placeholder="Search for games"
+              type="text"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="none"
+              spellcheck="false"
+              aria-label="Search input"
+            />
+            <button id="search-button" class="button-active">
+              <span>Search</span>
+              <i
+                id="loading-icon"
+                class="fas fa-circle-notch fa-spin hidden"
+              ></i>
+            </button>
+          </form>
+        </div>
+      </header>
       <div id="alert" role="alert" class="hidden">
         <p id="alert-message"></p>
         <a id="close-alert" href="#"><i class="fas fa-times"></i></a>
       </div>
-      <div id="results-container" class="hidden">
-        <div id="stats-container"></div>
-        <div id="cards-container"></div>
-      </div>
+      <main>
+        <div id="results-container" class="hidden">
+          <div id="stats-container"></div>
+          <div id="cards-container"></div>
+        </div>
+      </main>
     </div>
   </body>
   <script src="https://kit.fontawesome.com/4d87244547.js"></script>
