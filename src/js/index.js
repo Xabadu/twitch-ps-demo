@@ -5,4 +5,6 @@ import initListeners from "./dom/listeners";
 const twitchClient = new TwitchAPI();
 initListeners(twitchClient);
 
-module.hot.accept();
+if (module && module.hot) {
+  module.hot.accept();
+}
